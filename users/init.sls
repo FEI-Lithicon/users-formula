@@ -28,10 +28,13 @@
     - user: {{ name }}
     - group: {{ user_group }}
     - mode: {{ user.get('user_dir_mode', '0750') }}
+    {% if user.get('ldap', False) == False %}
     - require:
       - user: {{ name }}
       - group: {{ user_group }}
+    {% endif %}
   {%- endif %}
+  {% if user.get('ldap', False) == False %}
   group.present:
     - name: {{ user_group }}
     {%- if 'prime_group' in user and 'gid' in user['prime_group'] %}
@@ -74,6 +77,7 @@
       {% for group in user.get('groups', []) -%}
       - group: {{ group }}
       {% endfor %}
+    {% endif %}
 
 user_keydir_{{ name }}:
   file.directory:
@@ -82,13 +86,14 @@ user_keydir_{{ name }}:
     - group: {{ user_group }}
     - makedirs: True
     - mode: 700
+    {% if user.get('ldap', False) == False %}
     - require:
       - user: {{ name }}
       - group: {{ user_group }}
       {%- for group in user.get('groups', []) %}
       - group: {{ group }}
       {%- endfor %}
-
+    {% endif %}
   {% if 'ssh_keys' in user %}
   {% set key_type = 'id_' + user.get('ssh_key_type', 'rsa') %}
 user_{{ name }}_private_key:

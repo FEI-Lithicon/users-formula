@@ -28,6 +28,7 @@ users:
       - PUBLICKEY
     ssh_auth.absent:
       - PUBLICKEY_TO_BE_REMOVED
+    ldap: False
 
   ## Absent user
   cuser:
